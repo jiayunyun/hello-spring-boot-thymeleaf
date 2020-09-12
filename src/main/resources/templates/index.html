@@ -3,8 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <!--webrtc-->
+
 </head>
 <body>
-    <span th:value="${user.name}">张三</span>
+    <span>张三</span>
+    <video id="vi" width="480" autoplay height="320">
+    </video>
+    <script type="text/javascript">
+        function WebSocketTest()
+        {
+            if ("WebSocket" in window)
+            {
+                //alert("您的浏览器支持 WebSocket!");
+                // 打开一个 web socket
+                var ws = new WebSocket("ws://localhost:8080/app");
+
+                ws.onopen = function()
+                {
+                    // Web Socket 已连接上，使用 send() 方法发送数据
+                    ws.send("123");
+                    console.log("数据发送中...");
+                };
+                ws.onmessage = function (evt)
+                {
+                    var received_msg = evt;
+                    console.log("数据已接收...");
+                    console.log(received_msg);
+                };
+                ws.onclose = function()
+                {
+                    // 关闭 websocket
+                    console.log("连接已关闭...");
+                };
+                //监听当前页面关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+                window.onbeforeunload = function () {
+                    ws.close();
+                }
+            }
+            else
+            {
+                // 浏览器不支持 WebSocket
+                alert("您的浏览器不支持 WebSocket!");
+            }
+        }
+        function draw() {
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            navigator.getUserMedia({video:true,audio:false},sucess,console.log);
+        }
+        var sucess = function (stream) {
+            //document.getElementById("vi").src = window.URL.createObjectURL(stream);
+            try {
+                document.getElementById("vi").srcObject = stream;
+            } catch (error) {
+                document.getElementById("vi").src = window.URL.createObjectURL(stream);
+            }
+        }
+        draw();
+        WebSocketTest();
+    </script>
 </body>
 </html>
