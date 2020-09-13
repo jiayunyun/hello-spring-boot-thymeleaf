@@ -31,7 +31,8 @@ public class WebSocketUtil {
     }
 
     @OnMessage
-    public void onMessage(String message) {
+    public void onMessage(String message,Session session) {
+        sendMessage(message);
         log.info("websocket收到客户端发来的消息:" + message);
     }
 
